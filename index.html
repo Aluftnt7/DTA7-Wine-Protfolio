@@ -67,13 +67,20 @@
                             const viewport = page.getViewport({scale: 1});
                             const viewerWidth = document.getElementById('pdf-viewer').clientWidth;
                             const scale = viewerWidth / viewport.width;
-                            const scaledViewport = page.getViewport({scale: scale});
+                            
+                            // Increase resolution by using a higher scale for rendering
+                            const renderScale = scale * 2;
+                            const scaledViewport = page.getViewport({scale: renderScale});
 
                             const canvas = document.createElement('canvas');
                             canvas.className = 'pdf-page';
                             const context = canvas.getContext('2d');
                             canvas.height = scaledViewport.height;
                             canvas.width = scaledViewport.width;
+
+                            // Set the display size of the canvas
+                            canvas.style.width = `${viewerWidth}px`;
+                            canvas.style.height = `${viewerWidth * (viewport.height / viewport.width)}px`;
 
                             const renderContext = {
                                 canvasContext: context,
