@@ -12,7 +12,7 @@
             font-size: 16px;
         }
         .container { 
-            max-width: 800px; 
+            max-width: 100%;
             margin: 0 auto; 
         }
         #pdf-viewer {
@@ -48,7 +48,6 @@
 </head>
 <body>
     <div class="container">
-        <h1>DTA7 Wine Portfolio SS2024</h1>
         <div id="pdf-viewer"></div>
         <a href="protfolio.pdf" download class="download-link">Download PDF</a>
     </div>
@@ -63,27 +62,22 @@
                 pdfjsLib.getDocument(url).promise.then(function(pdf) {
                     for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                         pdf.getPage(pageNum).then(function(page) {
-                            const viewport = page.getViewport({scale: 1});
-                            const viewerWidth = document.getElementById('pdf-viewer').clientWidth;
-                            const scale = viewerWidth / viewport.width;
-                            
-                            // Increase resolution by using a higher scale for rendering
-                            const renderScale = scale * 2;
-                            const scaledViewport = page.getViewport({scale: renderScale});
+                            const scale = 2; // Increase this for even higher quality, but it will use more memory
+                            const viewport = page.getViewport({scale: scale});
 
                             const canvas = document.createElement('canvas');
                             canvas.className = 'pdf-page';
                             const context = canvas.getContext('2d');
-                            canvas.height = scaledViewport.height;
-                            canvas.width = scaledViewport.width;
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
 
                             // Set the display size of the canvas
-                            canvas.style.width = `${viewerWidth}px`;
-                            canvas.style.height = `${viewerWidth * (viewport.height / viewport.width)}px`;
+                            canvas.style.width = '100%';
+                            canvas.style.height = 'auto';
 
                             const renderContext = {
                                 canvasContext: context,
-                                viewport: scaledViewport
+                                viewport: viewport
                             };
                             page.render(renderContext);
 
