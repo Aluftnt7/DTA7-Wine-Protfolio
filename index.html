@@ -3,32 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DTA7 Wine Catalog SS2024</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title>DTA7 Wine Portfolio SS2024</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .pdf-container {
-            width: 100%;
-            max-width: 800px;
-            height: 100vh;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        /* Your existing styles here */
     </style>
 </head>
 <body>
-    <div class="pdf-container">
-        <iframe src="https://docs.google.com/gview?url=https://aluftnt7.github.io/DTA7-Wine-Protfolio.pdf&embedded=true"></iframe>
+    <div class="container">
+        <h1>DTA7 Wine Portfolio SS2024</h1>
+        <div id="pdf-viewer"></div>
+        <a href="protfolio.pdf" download class="download-link">Download PDF</a>
     </div>
+
+    <script>
+        // PDF.js script
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js';
+
+        fetch('protfolio.pdf')
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                pdfjsLib.getDocument(url).promise.then(function(pdf) {
+                    for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                        pdf.getPage(pageNum).then(function(page) {
+                            const scale = 1.5;
+                            const viewport = page.getViewport({scale: scale});
+
+                            const canvas = document.createElement('canvas');
+                            const context = canvas.getContext('2d');
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport
+                            };
+                            page.render(renderContext);
+
+                            document.getElementById('pdf-viewer').appendChild(canvas);
+                        });
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading PDF:', error);
+                document.getElementById('pdf-viewer').textContent = 'Error loading PDF. Please check the console for details.';
+            });
+    </script>
 </body>
 </html>
